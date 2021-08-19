@@ -12,32 +12,30 @@ time = datenum([y,m,d,h,mm,s]);
 % Create figure + plot
 figure(1);
 clf;
-% antenna0.hk0.slow_temp[28] is the 50K cold head
-% antenna0.hk0.slow_temp[29] is the 4K heat strap (cold side)
-% antenna0.hk0.slow_temp[30] is the 4K heat strap (warm side)
-% antenna0.hk0.slow_temp[31] is the 50K heat strap (cold side)
-% antenna0.hk0.slow_temp[32] is the 50K heat strap (warm side)
-% antenna0.hk0.slow_temp[33] is the 4K baseplate
-% antenna0.hk0.slow_temp[34] is the 4K tube (top)
-% antenna0.hk0.slow_temp[35] is the 50K tube (top)
-plot(time, f.antenna0.hk0.slow_temp[28]);
+% antenna0.hk0.slow_temp(:,28) is the 50K cold head
+% antenna0.hk0.slow_temp(:,29) is the 4K heat strap (cold side)
+% antenna0.hk0.slow_temp(:,30) is the 4K heat strap (warm side)
+% antenna0.hk0.slow_temp(:,31) is the 50K heat strap (cold side)
+% antenna0.hk0.slow_temp(:,32) is the 50K heat strap (warm side)
+% antenna0.hk0.slow_temp(:,33) is the 4K baseplate
+% antenna0.hk0.slow_temp(:,34) is the 4K tube (top)
+% antenna0.hk0.slow_temp(:,35) is the 50K tube (top)
+plot(time, f.antenna0.hk0.slow_temp(:,28), 'k-');
 hold on;
-plot(time, f.antenna0.hk0.slow_temp[29]);
-plot(time, f.antenna0.hk0.slow_temp[30]);
-plot(time, f.antenna0.hk0.slow_temp[31]);
-plot(time, f.antenna0.hk0.slow_temp[32]);
-plot(time, f.antenna0.hk0.slow_temp[33]);
-plot(time, f.antenna0.hk0.slow_temp[34]);
-plot(time, f.antenna0.hk0.slow_temp[35]);
-legend('50K cold head','4K heat strap (cold side)','4K heat strap (warm side)',
-       '50K heat strap (cold side)','50K heat strap (warm side)','4K baseplate',
-       '4K tube (top)','50K tube (top)');
-xlabel('Time');
+plot(time, f.antenna0.hk0.slow_temp(:,29), 'r-');
+plot(time, f.antenna0.hk0.slow_temp(:,30), 'y-');
+plot(time, f.antenna0.hk0.slow_temp(:,31), 'g-');
+plot(time, f.antenna0.hk0.slow_temp(:,32), 'c-');
+plot(time, f.antenna0.hk0.slow_temp(:,33), 'b-');
+plot(time, f.antenna0.hk0.slow_temp(:,34), 'm-');
+plot(time, f.antenna0.hk0.slow_temp(:,35), 'Color', [0.4940 0.1840 0.5560]);
+legend('50K cold head','4K heat strap cold side','4K heat strap warm side','50K heat strap cold side','50K heat strap warm side','4K baseplate','4K tube top','50K tube top');
+xlabel('Date');
 ylabel('Temperature [K]');
 title('BA4 Run 2 Temperatures');
 
 % Change x display to user friendly UTC
-datetick('x', 'HH:MM', 'keeplimits');
+datetick('x', 'mm/dd', 'keeplimits');
 
 % Save
 print('ba4_run2_temp', '-dpng');
