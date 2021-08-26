@@ -12,14 +12,6 @@ time = datenum([y,m,d,h,mm,s]);
 % Create figure + plot
 figure(1);
 clf;
-% antenna0.hk0.slow_temp(:,28) is the 50K cold head
-% antenna0.hk0.slow_temp(:,29) is the 4K heat strap (cold side)
-% antenna0.hk0.slow_temp(:,30) is the 4K heat strap (warm side)
-% antenna0.hk0.slow_temp(:,31) is the 50K heat strap (cold side)
-% antenna0.hk0.slow_temp(:,32) is the 50K heat strap (warm side)
-% antenna0.hk0.slow_temp(:,33) is the 4K baseplate
-% antenna0.hk0.slow_temp(:,34) is the 4K tube (top)
-% antenna0.hk0.slow_temp(:,35) is the 50K tube (top)
 plot(time, f.antenna0.hk0.slow_temp(:,28), 'k-');
 hold on;
 plot(time, f.antenna0.hk0.slow_temp(:,29), 'r-');
