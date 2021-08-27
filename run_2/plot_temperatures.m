@@ -1,6 +1,6 @@
 % Plot temperature curve (all temperatures) for run 4.2
 % Load data (can test in reduc/bicep3/, data files in arc/)
-d = load_arc('~/ba4/run_2/', '210801 00:00:00', '210801 06:00:00');
+d = load_arc('/n/home04/yuka/ba4/run_2/arc/', '210826 16:35:00', '21xxxx xx:xx:xx'); %TODO
 
 % Turn two field UTC into single column modified Julian date
 f = make_utc_single_col(d);
@@ -12,6 +12,7 @@ time = datenum([y,m,d,h,mm,s]);
 % Create figure + plot
 figure(1);
 clf;
+setwinsize(gcf,800,600);
 plot(time, f.antenna0.hk0.slow_temp(:,28), 'k-');
 hold on;
 plot(time, f.antenna0.hk0.slow_temp(:,29), 'r-');
