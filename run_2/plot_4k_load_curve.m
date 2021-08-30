@@ -70,10 +70,10 @@ setwinsize(gcf,600,600);
 plot(delta_t_squared, input_powers, 'k.');
 hold on;
 plot(delta_t_squared, fit_line, 'b-');
-legend('BA 4.2 Data', sprintf('Fit: K = %.2f W/K^2, Base Loading %.2f W', k_0, base_loading));
+legend('BA 4.2 Data', sprintf('Fit: K_0 = %.2f W/K^2, Base Loading %.2f W', k_0, base_loading));
 xlabel('T_H^2-T_C^2 [K^2]');
 ylabel('Applied Power [W]');
-title(sprintf('BA4 Run 2 4K Load Curve: Conductance G = %.2f W/K @ 4 K', g));
+title(sprintf('BA4 Run 2 4K Load Curve: Conductance G = %.2f W/K @ 4K', g));
 
 % Save
 print('/n/home04/yuka/ba4/run_2/ba4_run2_4k_load_curve_fit', '-dpng');
