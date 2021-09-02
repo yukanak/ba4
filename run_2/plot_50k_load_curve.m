@@ -27,18 +27,19 @@ clf;
 setwinsize(gcf,800,600);
 plot(time, f.antenna0.hk0.slow_temp(:,33), 'r-');
 hold on;
+plot(time, f.antenna0.hk0.slow_temp(:,32), 'b-');
 for ii = 1:length(start_times)
     time_i = start_times(ii); 
     time_f = end_times(ii); 
     time_idx = find(time>time_i & time<time_f);
-    plot(time_idx, f.antenna0.hk0.slow_temp(time_idx,33), 'Color', [0.8500 0.3250 0.0980]);
+    plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,33), 'Color', [0.8500 0.3250 0.0980]);
 end
 plot(time, f.antenna0.hk0.slow_temp(:,32), 'b-');
 for ii = 1:length(start_times)
     time_i = start_times(ii); 
     time_f = end_times(ii); 
     time_idx = find(time>time_i & time<time_f);
-    plot(time_idx, f.antenna0.hk0.slow_temp(time_idx,32), 'Color', [0.8500 0.3250 0.0980]);
+    plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,32), 'Color', [0.8500 0.3250 0.0980]);
 end
 legend('50K heat strap warm side','50K heat strap cold side');
 xlabel('Time');
