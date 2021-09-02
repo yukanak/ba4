@@ -41,14 +41,14 @@ for ii = 1:length(start_times)
     time_i = start_times(ii);
     time_f = end_times(ii);
     time_idx = find(time>time_i & time<time_f);
-    plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,31), 'Color', [0.8500 0.3250 0.0980]);
+    plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,31), 'g-');
 end
 plot(time, f.antenna0.hk0.slow_temp(:,30), 'b-');
 for ii = 1:length(start_times)
     time_i = start_times(ii);
     time_f = end_times(ii);
     time_idx = find(time>time_i & time<time_f);
-    plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,30), 'Color', [0.8500 0.3250 0.0980]);
+    plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,30), 'g-');
 end
 legend('4K heat strap warm side','4K heat strap cold side');
 xlabel('Time');
