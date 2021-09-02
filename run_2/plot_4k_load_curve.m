@@ -1,7 +1,26 @@
 % Plot 4K load curve
 % Edit in the start time and end time
 % In UTC!
-d = load_arc('/n/home04/yuka/ba4/run_2/arc/', '210801 00:00:00', '210801 00:00:00'); %TODO
+d = load_arc('/n/home04/yuka/ba4/run_2/arc/', '210901 20:00:00', '210901 00:00:00'); %TODO
+
+resistance = 200;
+input_currents = [0, 0.022, 0.032, 0.039, 0.045, 0.050]; %TODO
+% Use current for power calculation because significant resistance in cables
+input_powers = input_currents.^2.*resistance;
+% Start times and end times of averaging for each input power
+% Average over 10 minutes once temperature is steady
+start_times = [datenum([2021,09,01,20,15,00]), ...
+               datenum([2021,09,01,21,00,00]), ...
+               datenum([2021,09,01,21,45,00]), ...
+               datenum([2021,09,01,22,30,00]), ...
+               datenum([2021,09,01,23,15,00]), ...
+               datenum([2021,09,02,00,00,00])]; %TODO
+end_times = [datenum([2021,09,01,20,25,00]), ...
+             datenum([2021,09,01,21,10,00]), ...
+             datenum([2021,09,01,21,55,00]), ... 
+             datenum([2021,09,01,22,40,00]), ... 
+             datenum([2021,09,01,23,25,00]), ... 
+             datenum([2021,09,02,00,10,00])]; %TODO
 
 % First, just plot timestream
 % Turn two field UTC into single column modified Julian date
@@ -15,10 +34,20 @@ time = datenum([y,m,d,h,mm,s]);
 figure(1);
 clf;
 setwinsize(gcf,800,600);
-plot(time, f.antenna0.hk0.slow_temp(:,29), 'r-');
+plot(time, f.antenna0.hk0.slow_temp(:,30), 'r-');
 hold on;
-plot(time, f.antenna0.hk0.slow_temp(:,30), 'b-');
-legend('4K heat strap cold side','4K heat strap warm side');
+for ii = 1:length(start_times)
+    time_i = start_times(ii);
+    time_f = end_times(ii);
+    time_idx = find(time>time_i & time<time_f);
+    plot(time_idx, f.antenna0.hk0.slow_temp(:,30), 'Color', [0.8500 0.3250 0.0980]);
+plot(time, f.antenna0.hk0.slow_temp(:,29), 'b-');
+for ii = 1:length(start_times)
+    time_i = start_times(ii);
+    time_f = end_times(ii);
+    time_idx = find(time>time_i & time<time_f);
+    plot(time_idx, f.antenna0.hk0.slow_temp(:,29), 'Color', [0.8500 0.3250 0.0980]);
+legend('4K heat strap warm side','4K heat strap cold side');
 xlabel('Time');
 ylabel('Temperature [K]');
 title('BA4 Run 2 4K Load Curve Temperatures');
@@ -30,17 +59,6 @@ datetick('x', 'mm/dd HH:MM', 'keeplimits');
 print('/n/home04/yuka/ba4/run_2/ba4_run2_4k_load_curve_temp', '-dpng');
 
 % Now make the power fitting plots
-% Edit below
-resistance = 200;
-input_voltages = []; %TODO
-input_powers = input_voltages.^2/resistance;
-% Start times and end times of averaging for each input power
-% Average over 10 minutes once temperature is steady
-start_times = [datenum([2019,04,29,14,42,00]), ...
-               datenum([2019,04,29,15,02,00])]; %TODO
-end_times = [datenum([2019,04,29,14,52,00]), ...
-               datenum([2019,04,29,15,12,00])]; %TODO
-
 delta_t_squared = zeros(size(input_powers));
 for ii = 1:length(start_times)
     time_i = start_times(ii);
