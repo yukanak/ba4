@@ -141,7 +141,7 @@ print('/n/home04/yuka/ba4/run_2/ba4p2_cooldown_50k_log', '-dpng');
 
 % Get the base temperatures
 start_time = datenum([2021,09,01,16,00,00]); % TODO
-end_time = datenum([2019,09,01,16,30,00]); % TODO
+end_time = datenum([2021,09,01,16,30,00]); % TODO
 time_idx = find(time>start_time & time<end_time);
 
 for diode = [29 30 31 32 33 34 35 36]
