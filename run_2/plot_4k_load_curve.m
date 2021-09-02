@@ -50,7 +50,7 @@ for ii = 1:length(start_times)
     time_idx = find(time>time_i & time<time_f);
     plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,30), 'g-');
 end
-legend('4K heat strap warm side','4K heat strap cold side');
+legend('4K heat strap warm side','4K heat strap cold side', 'Location', 'northwest');
 xlabel('Time');
 ylabel('Temperature [K]');
 title('BA4 Run 2 4K Load Curve Temperatures');
