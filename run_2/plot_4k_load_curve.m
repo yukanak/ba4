@@ -1,7 +1,7 @@
 % Plot 4K load curve
 % Edit in the start time and end time
 % In UTC!
-d = load_arc('/n/home04/yuka/ba4/run_2/arc/', '210901 20:00:00', '210901 00:00:00'); %TODO
+d = load_arc('/n/home04/yuka/ba4/run_2/arc/', '210901 20:00:00', '210901 00:00:00', {'array.frame.utc', 'antenna0.frame.utc', 'antenna0.hk0.slow_temp'}); %TODO
 
 resistance = 200;
 input_currents = [0, 0.022, 0.032, 0.039, 0.045, 0.050]; %TODO
