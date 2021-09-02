@@ -34,22 +34,24 @@ time = datenum([y,m,d,h,mm,s]);
 figure(1);
 clf;
 setwinsize(gcf,800,600);
-plot(time, f.antenna0.hk0.slow_temp(:,31), 'r-');
+%plot(time, f.antenna0.hk0.slow_temp(:,31), 'r-');
+plot(time, movmean(f.antenna0.hk0.slow_temp(:,31),50), 'r-');
 hold on;
-plot(time, f.antenna0.hk0.slow_temp(:,30), 'b-');
-for ii = 1:length(start_times)
-    time_i = start_times(ii);
-    time_f = end_times(ii);
-    time_idx = find(time>time_i & time<time_f);
-    plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,31), 'g-');
-end
-plot(time, f.antenna0.hk0.slow_temp(:,30), 'b-');
-for ii = 1:length(start_times)
-    time_i = start_times(ii);
-    time_f = end_times(ii);
-    time_idx = find(time>time_i & time<time_f);
-    plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,30), 'g-');
-end
+plot(time, movmean(f.antenna0.hk0.slow_temp(:,30),50), 'b-');
+%plot(time, f.antenna0.hk0.slow_temp(:,30), 'b-');
+%for ii = 1:length(start_times)
+%    time_i = start_times(ii);
+%    time_f = end_times(ii);
+%    time_idx = find(time>time_i & time<time_f);
+%    plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,31), 'g-');
+%end
+%plot(time, f.antenna0.hk0.slow_temp(:,30), 'b-');
+%for ii = 1:length(start_times)
+%    time_i = start_times(ii);
+%    time_f = end_times(ii);
+%    time_idx = find(time>time_i & time<time_f);
+%    plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,30), 'g-');
+%end
 legend('4K heat strap warm side','4K heat strap cold side', 'Location', 'northwest');
 xlabel('Time');
 ylabel('Temperature [K]');
@@ -59,7 +61,7 @@ title('BA4 Run 2 4K Load Curve Temperatures');
 datetick('x', 'mm/dd HH:MM', 'keeplimits');
 
 % Save
-print('/n/home04/yuka/ba4/run_2/ba4_run2_4k_load_curve_temp', '-dpng');
+print('/n/home04/yuka/ba4/run_2/ba4_run2_4k_load_curve_temp_smoothed', '-dpng');
 
 % Now make the power fitting plots
 delta_t_squared = zeros(size(input_powers));
