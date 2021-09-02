@@ -34,19 +34,19 @@ time = datenum([y,m,d,h,mm,s]);
 figure(1);
 clf;
 setwinsize(gcf,800,600);
-plot(time, f.antenna0.hk0.slow_temp(:,30), 'r-');
+plot(time, f.antenna0.hk0.slow_temp(:,31), 'r-');
 hold on;
 for ii = 1:length(start_times)
     time_i = start_times(ii);
     time_f = end_times(ii);
     time_idx = find(time>time_i & time<time_f);
-    plot(time_idx, f.antenna0.hk0.slow_temp(:,30), 'Color', [0.8500 0.3250 0.0980]);
-plot(time, f.antenna0.hk0.slow_temp(:,29), 'b-');
+    plot(time_idx, f.antenna0.hk0.slow_temp(:,31), 'Color', [0.8500 0.3250 0.0980]);
+plot(time, f.antenna0.hk0.slow_temp(:,30), 'b-');
 for ii = 1:length(start_times)
     time_i = start_times(ii);
     time_f = end_times(ii);
     time_idx = find(time>time_i & time<time_f);
-    plot(time_idx, f.antenna0.hk0.slow_temp(:,29), 'Color', [0.8500 0.3250 0.0980]);
+    plot(time_idx, f.antenna0.hk0.slow_temp(:,30), 'Color', [0.8500 0.3250 0.0980]);
 legend('4K heat strap warm side','4K heat strap cold side');
 xlabel('Time');
 ylabel('Temperature [K]');
@@ -64,8 +64,8 @@ for ii = 1:length(start_times)
     time_i = start_times(ii);
     time_f = end_times(ii);
     time_idx = find(time>time_i & time<time_f);
-    t_warm_avg = mean(f.antenna0.hk0.slow_temp(time_idx,30));
-    t_cold_avg = mean(f.antenna0.hk0.slow_temp(time_idx,29));
+    t_warm_avg = mean(f.antenna0.hk0.slow_temp(time_idx,31));
+    t_cold_avg = mean(f.antenna0.hk0.slow_temp(time_idx,30));
     delta_t_squared(ii) = t_warm_avg.^2 - t_cold_avg.^2;
 end
 
