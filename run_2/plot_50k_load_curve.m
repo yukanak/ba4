@@ -1,17 +1,19 @@
 % Plot 50K load curve
 % Edit in the start time and end time
 % In UTC!
-d = load_arc('/n/home04/yuka/ba4/run_2/arc/', '210801 00:00:00', '210801 00:00:00',{'array.frame.utc', 'antenna0.frame.utc', 'antenna0.hk0.slow_temp'}); %TODO
+d = load_arc('/n/home04/yuka/ba4/run_2/arc/', '210902 01:15:00', '210904 00:15:00',{'array.frame.utc', 'antenna0.frame.utc', 'antenna0.hk0.slow_temp'}); %TODO
 
 resistance = 200;
-input_currents = []; %TODO
+input_currents = [0, 0.071, 0.099]; %TODO
 input_powers = input_currents.^2.*resistance;
 % Start times and end times of averaging for each input power
 % Average over once temperature is steady
-start_times = [datenum([2019,04,29,14,42,00]), ...
-               datenum([2019,04,29,15,02,00])]; %TODO
-end_times = [datenum([2019,04,29,14,52,00]), ...
-               datenum([2019,04,29,15,12,00])]; %TODO
+start_times = [datenum([2021,09,02,01,20,00]), ...
+               datenum([2021,09,02,19,40,00]), ...
+               datenum([2021,09,03,23,40,00])]; %TODO
+end_times = [datenum([2021,09,02,01,30,00]), ...
+             datenum([2021,09,02,19,50,00]), ...
+             datenum([2021,09,03,23,50,00])]; %TODO
 
 % First, just plot timestream
 % Turn two field UTC into single column modified Julian date
