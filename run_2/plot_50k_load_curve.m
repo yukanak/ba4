@@ -43,13 +43,13 @@ for ii = 1:length(start_times)
     time_idx = find(time>time_i & time<time_f);
     plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,32), 'g-');
 end
-legend('50K heat strap warm side','50K heat strap cold side');
+legend('50K heat strap warm side','50K heat strap cold side', 'Location', 'northwest');
 xlabel('Time');
 ylabel('Temperature [K]');
 title('BA4 Run 2 50K Load Curve Temperatures');
 
 % Change x display to user friendly UTC
-datetick('x', 'mm/dd HH:MM', 'keeplimits');
+datetick('x', 'mm/dd', 'keeplimits');
 
 % Save
 print('/n/home04/yuka/ba4/run_2/ba4_run2_50k_load_curve_temp', '-dpng');
@@ -84,7 +84,7 @@ setwinsize(gcf,600,600);
 plot(delta_t_inv, input_powers, 'k.');
 hold on;
 plot(delta_t_inv, fit_line, 'b-');
-legend('BA 4.2 Data', sprintf('Fit: K_0 = %.2f W x K, Base Loading %.2f W', k_0, base_loading));
+legend('BA 4.2 Data', sprintf('Fit: K_0 = %.2f W x K, Base Loading %.2f W', k_0, base_loading), 'Location', 'southeast');
 xlabel('1/T_C-1/T_H [1/K]');
 ylabel('Applied Power [W]');
 title(sprintf('BA4 Run 2 50K Load Curve: Conductance G = %.2f W/K @ 50K', g));
