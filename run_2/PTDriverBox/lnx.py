@@ -14,11 +14,12 @@ import serial
 
 end_cmd = '\n'
 
+# Do dmesg | tail to figure out what dev should be
+
 dev = '/dev/ttyUSB2'
 #dev = '/dev/ttyS0'
 
 ser = serial.Serial(dev,timeout=1.0)
-
 
 def w(x):
 	ser.write(x.upper()+end_cmd)

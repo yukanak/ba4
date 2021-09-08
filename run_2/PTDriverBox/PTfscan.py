@@ -1,25 +1,21 @@
-#!/usr/bin/python
-
-#original file from caltech
-
+#!/usr/bin/env python
 
 import numpy as np
 import datetime
 import os, time
 
-
-
 mycmd = 'python setfreq.py'
+
+# By default, 72/50 = 1.44 Hz to 1.1 Hz in 0.04 Hz steps
 
 nstep = 2
 
-npoints = range(72,55, -nstep)
+npoints = range(72,55,-nstep)
 
-waittime = 3600 #seconds
+waittime = 3600 # seconds
 
 print(str(datetime.datetime.now()))
 os.system(mycmd+' '+str(float(npoints[0])/50))
-
 
 for ii in npoints:
 
@@ -29,6 +25,5 @@ for ii in npoints:
     os.system(mycmd+' '+str(float(ii)/50))
 
     time.sleep(waittime)
-
 
 # os.system(mycmd+' '+str(1.34))

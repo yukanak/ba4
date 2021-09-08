@@ -1,10 +1,9 @@
-#!/usr/bin/python
-
-#File from Caltech
+#!/usr/bin/env python
 
 import sys
-
 import lnx
+
+# To use this script, do e.g. ./setfreq.py 1.4 to set it to 1.4 Hz
 
 default_speed = 70
 min_speed = 55
@@ -19,7 +18,6 @@ except IndexError:
 if min_speed > speed or speed > max_speed:
 	print>>sys.stderr,"speed %d out of range %d to %d"%(speed,min_speed,max_speed)
 	exit(1)
-
 
 #print lnx.wr('RS')
 #print lnx.wr('STOP')
