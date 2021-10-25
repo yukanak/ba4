@@ -1,6 +1,7 @@
 % Plot temperature curve (all temperatures) for run 4.3
 % Load data (can test in reduc/bicep3/, data files in arc/)
-d = load_arc('/n/home04/yuka/ba4/run_3/arc/', '211018 18:30:00', '2110XX XX:XX:XX', {'array.frame.utc', 'antenna0.frame.utc', 'antenna0.hk0.slow_temp'});
+% To use, go to a directory with access to pipeline, and add this directory to startup.m there; then start MATLAB and type plot_temperatures
+d = load_arc('/n/home04/yuka/ba4/run_3/arc/', '211018 18:30:00', '211025 03:20:00', {'array.frame.utc', 'antenna0.frame.utc', 'antenna0.hk0.slow_temp'});
 
 % Turn two field UTC into single column modified Julian date
 f = make_utc_single_col(d);
@@ -140,8 +141,8 @@ datetick('x', 'mm/dd', 'keeplimits');
 print('/n/home04/yuka/ba4/run_3/ba4p3_cooldown_50k_log', '-dpng');
 
 % Get the base temperatures
-start_time = datenum([2021,09,01,16,00,00]); % TODO
-end_time = datenum([2021,09,01,16,30,00]); % TODO
+start_time = datenum([2021,10,25,02,50,00]); % TODO
+end_time = datenum([2021,10,25,03,20,00]); % TODO
 time_idx = find(time>start_time & time<end_time);
 
 for diode = [29 30 31 32 33 34 35 36]
