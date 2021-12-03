@@ -3,7 +3,8 @@
 % To use, go to a directory with access to pipeline, and add this directory to startup.m there; then start MATLAB and type plot_temperatures
 %d = load_arc('/n/home04/yuka/ba4/run_3/arc/', '211026 17:15:03', '211026 22:00:00', {'array.frame.utc', 'antenna0.frame.utc', 'antenna0.hk0.slow_temp'});
 %d = load_arc('/n/home04/yuka/ba4/run_3/arc/', '211029 00:39:03', '211029 05:25:00', {'array.frame.utc', 'antenna0.frame.utc', 'antenna0.hk0.slow_temp'});
-d = load_arc('/n/home04/yuka/ba4/run_3/arc/', '211030 20:29:29', '211031 01:15:00', {'array.frame.utc', 'antenna0.frame.utc', 'antenna0.hk0.slow_temp'});
+%d = load_arc('/n/home04/yuka/ba4/run_3/arc/', '211030 20:29:29', '211031 01:15:00', {'array.frame.utc', 'antenna0.frame.utc', 'antenna0.hk0.slow_temp'});
+d = load_arc('/n/home04/yuka/ba4/run_3/arc/', '211102 17:21:05', '211103 00:00:00', {'array.frame.utc', 'antenna0.frame.utc', 'antenna0.hk0.slow_temp'});
 
 % Turn two field UTC into single column modified Julian date
 f = make_utc_single_col(d);
@@ -14,8 +15,8 @@ time = datenum([y,m,d,h,mm,s]);
 
 % Get the base temperatures
 base_temps = []
-start_time = datenum([2021,10,31,01,00,00]); % TODO
-end_time = datenum([2021,10,31,01,10,00]); % TODO
+start_time = datenum([2021,11,02,23,50,00]); % TODO
+end_time = datenum([2021,11,03,00,00,00]); % TODO
 time_idx = find(time>start_time & time<end_time);
 
 for therm = [1 2 3 4 5 6 7 8]
@@ -23,6 +24,9 @@ for therm = [1 2 3 4 5 6 7 8]
     base_temps(therm) = base_temp;
     fprintf('Thermometer %d: %.2f K\n', therm, base_temp);
 end
+
+base_temps(1) = 4.34;
+base_temps(2) = 4.88;
 
 % Create figure + plot
 figure(1);
@@ -40,13 +44,13 @@ plot(time, f.antenna0.hk0.slow_temp(:,8), 'Color', [0.4940 0.1840 0.5560]);
 legend(sprintf('He4 Pump (%.2f K)',base_temps(1)),sprintf('He3 Pump (%.2f K)',base_temps(2)),sprintf('He4 Switch (%.2f K)',base_temps(3)),sprintf('He3 Switch (%.2f K)',base_temps(4)),sprintf('He4 Condensation Point (%.2f K)',base_temps(5)),sprintf('He4 Evaporator (%.2f K)',base_temps(6)),sprintf('IC Evaporator (%.2f K)',base_temps(7)),sprintf('UC Evaporator (%.2f K)',base_temps(8)));
 xlabel('Time');
 ylabel('Temperature [K]');
-title('BA4 Run 3 211030 Fridge Cycle Temperatures');
+title('BA4 Run 3 211102 Fridge Cycle Temperatures');
 
 % Change x display to user friendly UTC
 datetick('x', 'HH:MM', 'keeplimits');
 
 % Save
-print('/n/home04/yuka/ba4/run_3/ba4p3_fridge_cycle_211030', '-dpng');
+print('/n/home04/yuka/ba4/run_3/ba4p3_fridge_cycle_211102', '-dpng');
 
 % Create figure + plot
 figure(2);
@@ -61,13 +65,13 @@ semilogy(time, f.antenna0.hk0.slow_temp(:,5), 'c-');
 semilogy(time, f.antenna0.hk0.slow_temp(:,6), 'b-');
 semilogy(time, f.antenna0.hk0.slow_temp(:,7), 'm-');
 semilogy(time, f.antenna0.hk0.slow_temp(:,8), 'Color', [0.4940 0.1840 0.5560]);
-legend(sprintf('He4 Pump (%.2f K)',base_temps(1)),sprintf('He3 Pump (%.2f K)',base_temps(2)),sprintf('He4 Switch (%.2f K)',base_temps(3)),sprintf('He3 Switch (%.2f K)',base_temps(4)),sprintf('He4 Condensation Point (%.2f K)',base_temps(5)),sprintf('He4 Evaporator (%.2f K)',base_temps(6)),sprintf('IC Evaporator (%.2f K)',base_temps(7)),sprintf('UC Evaporator (%.2f K)',base_temps(8)));
+legend(sprintf('He4 Pump (%.2f K)',base_temps(1)),sprintf('He3 Pump (%.2f K)',base_temps(2)),sprintf('He4 Switch (%.2f K)',base_temps(3)),sprintf('He3 Switch (%.2f K)',base_temps(4)),sprintf('He4 Condensation Point (%.2f K)',base_temps(5)),sprintf('He4 Evaporator (%.2f K)',base_temps(6)),sprintf('IC Evaporator (%.2f K)',base_temps(7)),sprintf('UC Evaporator (%.2f K)',base_temps(8)), 'Location', 'southwest');
 xlabel('Time');
 ylabel('Temperature [K]');
-title('BA4 Run 3 211030 Fridge Cycle Temperatures');
+title('BA4 Run 3 211102 Fridge Cycle Temperatures');
 
 % Change x display to user friendly UTC
 datetick('x', 'HH:MM', 'keeplimits');
 
 % Save
-print('/n/home04/yuka/ba4/run_3/ba4p3_fridge_cycle_211030_log', '-dpng');
+print('/n/home04/yuka/ba4/run_3/ba4p3_fridge_cycle_211102_log', '-dpng');
