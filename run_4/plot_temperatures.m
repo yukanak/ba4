@@ -1,8 +1,10 @@
-% Plot temperature curve (all temperatures) for run 4.4
+function plot_temperatures(run,starttime,endtime,basetemp_starttime,basetemp_endtime)
+% For run 4.4, run=4, starttime='220211 21:45:00', endtime='220216 18:30:00', basetemp_starttime=[2022,02,16,18,15,00], basetemp_endtime=[2022,02,16,18,30,00]
+
+% Plot temperature curve (all temperatures) for run
 % Load data (can test in reduc/bicep3/, data files in arc/)
-% To use, go to a directory with access to pipeline, and add this directory to startup.m there; then start MATLAB and type plot_temperatures
-run = 4; %TODO
-d = load_arc(sprintf('/n/home04/yuka/ba4/run_%d/arc/', run), '211204 01:20:00', '2112XX XX:XX:XX', {'array.frame.utc', 'antenna0.frame.utc', 'antenna0.hk0.slow_temp'}); %TODO
+% To use, go to a directory with access to pipeline, and add this directory to startup.m there; then start MATLAB and type plot_temperatures(args)
+d = load_arc(sprintf('/n/home04/yuka/ba4/run_%d/arc/', run), starttime, endtime, {'array.frame.utc', 'antenna0.frame.utc', 'antenna0.hk0.slow_temp'});
 
 % Turn two field UTC into single column modified Julian date
 f = make_utc_single_col(d);
@@ -146,11 +148,13 @@ datetick('x', 'mm/dd', 'keeplimits');
 print(sprintf('/n/home04/yuka/ba4/run_%d/ba4p%d_cooldown_50k_log', run, run), '-dpng');
 
 % Get the base temperatures
-start_time = datenum([2021,10,25,02,50,00]); % TODO
-end_time = datenum([2021,10,25,03,20,00]); % TODO
+start_time = datenum(basetemp_starttime);
+end_time = datenum(basetemp_endtime);
 time_idx = find(time>start_time & time<end_time);
 
 for diode = [29 30 31 32 33 34 35 36 37]
     temp_avg = nanmean(f.antenna0.hk0.slow_temp(time_idx,diode));
     fprintf('Thermometer %d: %.2f K\n', diode, temp_avg);
 end
+
+return
