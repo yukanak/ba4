@@ -1,5 +1,6 @@
 function plot_fridge_cycle(run, starttime, endtime, basetemp_starttime, basetemp_endtime)
 % For first fridge cycle of run 4.4, run=4; starttime='220216 22:00:00'; endtime='220217 6:00:00'; basetemp_starttime=[2022,02,17,05,50,00]; basetemp_endtime=[2022,02,17,06,00,00];
+% Second one: run=4; starttime='220217 6:02:00'; endtime='220217 14:00:00'; basetemp_starttime=[2022,02,17,13,50,00]; basetemp_endtime=[2022,02,17,14,00,00];
 % Plot fridge cycle
 % Load data (can test in reduc/bicep3/, data files in arc/)
 % To use, go to a directory with access to pipeline, and add this directory to startup.m there; then start MATLAB and type plot_temperatures
