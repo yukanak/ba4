@@ -5,8 +5,7 @@ from scipy.stats import linregress
 def extrapolate_diode(loc, vol_low, vol_high, hk_val_low=None, hk_val_high=None):
     '''
     We want
-    to predict the temperature by doing a rough exponential extrapolation
-    (which is linear on a log-log plot).
+    to predict the temperature by doing a linear extrapolation.
     The loc should be e.g. 'C2' for 4K heat strap cold of run 4.
     The argument vol_low and vol_high should be the voltage in V.
     '''
