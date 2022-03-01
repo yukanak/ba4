@@ -8,7 +8,7 @@ def extrapolate_cernox(loc, res_val, hk_val=None):
     to predict the temperature by doing a rough exponential extrapolation
     (which is linear on a log-log plot).
     The loc should be either 'uc evap', 'ic evap', 'he4 evap', or 'he4 cond'.
-    The argument res should be the resistance in Ohms.
+    The argument res_val should be the resistance in Ohms.
     '''
     d = np.genfromtxt(open("ba4_fridge_cernox_data.csv", "rb"), delimiter=",", filling_values=0, skip_header=1)
     if loc == 'uc evap':
