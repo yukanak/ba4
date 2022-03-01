@@ -33,7 +33,8 @@ def extrapolate_diode(loc, vol_low, vol_high, hk_val_low=None, hk_val_high=None)
         title = '50K Tube Top'
     else:
         raise ValueError("Argument loc must be between 'C2' to 'C8'")
-        
+    name = filename[13:-4]
+
     d = np.genfromtxt(open(filename, "rb"), delimiter=" ")
     temp = d[:,1]
     vol = d[:,0]
@@ -51,11 +52,11 @@ def extrapolate_diode(loc, vol_low, vol_high, hk_val_low=None, hk_val_high=None)
         temp_high = np.nan
         temp_low = np.nan
 
-    plt.plot(temp, vol, 'b.', label=f'Diode {loc} Calibration')
+    plt.plot(temp, vol, 'b.', label=f'Diode {name} Calibration')
     plt.plot(x_interp, m*x_interp+b, color='g', linestyle='--', label='Fit Line')
-    plt.plot(temp_high, vol_low, 'rx', label=f'{temp_high:.3f} K at {vol_low} V')
+    plt.plot(temp_low, vol_high, 'rx', label=f'{temp_low:.2f} K at {vol_high:.4} V')
     if vol_low != vol_high:
-        plt.plot(temp_low, vol_high, 'rx', label=f'{temp_low:.3f} K at {vol_high} V')
+        plt.plot(temp_high, vol_low, 'rx', label=f'{temp_high:.2f} K at {vol_low:.4} V')
     if hk_val_low:
         plt.plot(hk_val_low, vol_high, color='y', marker='x', linestyle='', label=f'HK Temperature Value: {hk_val_low:.2f} K')
         if hk_val_low != hk_val_high:
@@ -64,6 +65,10 @@ def extrapolate_diode(loc, vol_low, vol_high, hk_val_low=None, hk_val_high=None)
     plt.ylabel('Voltage [V]')
     plt.title(title)
     plt.legend()
+    #plt.xlim(2,5)
+    #plt.ylim(1.5,1.7)
+    plt.xlim(40,50)
+    plt.ylim(1,1.2)
     plt.show()
 
     return temp_low, temp_high
