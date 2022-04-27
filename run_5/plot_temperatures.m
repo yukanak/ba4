@@ -1,5 +1,5 @@
 function plot_temperatures(run,starttime,endtime,basetemp_starttime,basetemp_endtime)
-% For run 4.5, run=5, starttime='220423 01:00:00', endtime='2204XX XX:XX:00', basetemp_starttime=[2022,04,XX,XX,XX,XX], basetemp_endtime=[2022,04,XX,XX,XX,XX]
+% For run 4.5, run=5; starttime='220423 01:00:00'; endtime='220427 14:00:00'; basetemp_starttime=[2022,04,27,13,50,00]; basetemp_endtime=[2022,04,27,14,00,00];
 
 % Plot temperature curve (all temperatures) for run
 % Load data (can test in reduc/bicep3/, data files in arc/)
