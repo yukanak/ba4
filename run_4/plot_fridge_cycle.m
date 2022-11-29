@@ -1,6 +1,7 @@
 function plot_fridge_cycle(run, starttime, endtime, basetemp_starttime, basetemp_endtime)
 % For first fridge cycle of run 4.4, run=4; starttime='220216 22:00:00'; endtime='220217 6:00:00'; basetemp_starttime=[2022,02,17,05,50,00]; basetemp_endtime=[2022,02,17,06,00,00];
 % Second one: run=4; starttime='220217 6:02:00'; endtime='220217 14:00:00'; basetemp_starttime=[2022,02,17,13,50,00]; basetemp_endtime=[2022,02,17,14,00,00];
+% The end of the second fridge cycle: run=4; starttime='220224 19:00:00'; endtime='220224 21:00:00'; basetemp_starttime=[2022,02,24,20,50,00]; basetemp_endtime=[2022,02,24,21,00,00];
 % Plot fridge cycle
 % Load data (can test in reduc/bicep3/, data files in arc/)
 % To use, go to a directory with access to pipeline, and add this directory to startup.m there; then start MATLAB and type plot_temperatures
@@ -40,7 +41,7 @@ plot(time, f.antenna0.hk0.slow_temp(:,5), 'c-');
 plot(time, f.antenna0.hk0.slow_temp(:,6), 'b-');
 plot(time, f.antenna0.hk0.slow_temp(:,7), 'm-');
 plot(time, f.antenna0.hk0.slow_temp(:,8), 'Color', [0.4940 0.1840 0.5560]);
-legend(sprintf('He4 Pump (%.2f K)',base_temps(1)),sprintf('He3 Pump (%.2f K)',base_temps(2)),sprintf('He4 Switch (%.2f K)',base_temps(3)),sprintf('He3 Switch (%.2f K)',base_temps(4)),sprintf('He4 Condensation Point (%.2f K)',base_temps(5)),sprintf('He4 Evaporator (%.2f K)',base_temps(6)),sprintf('IC Evaporator (%.2f K)',base_temps(7)),sprintf('UC Evaporator (%.2f K)',base_temps(8)));
+legend(sprintf('He4 Pump (%.2f K)',base_temps(1)),sprintf('He3 Pump (%.2f K)',base_temps(2)),sprintf('He4 Switch (%.2f K)',base_temps(3)),sprintf('He3 Switch (%.2f K)',base_temps(4)),sprintf('He4 Condensation Point (%.2f K)',base_temps(5)),sprintf('He4 Evaporator (%.2f K)',base_temps(6)),sprintf('IC Evaporator (%.2f K)',base_temps(7)),sprintf('UC Evaporator (%.2f K)',base_temps(8)), 'Location', 'northeast');
 xlabel('Time');
 ylabel('Temperature [K]');
 title(sprintf('BA4 Run %d %s Fridge Cycle Temperatures', run, cycle_date));
