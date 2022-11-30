@@ -24,10 +24,10 @@ def extrapolate_cernox(loc, res_val):
     else:
         print("Resistance is too small; room temperature!")
         temp_val = np.nan
-    return temp_val
+    return popt, temp_val
 
 def plot_extrapolation(loc, res_val, hk_val=None):
-    temp_val = extrapolate_cernox(loc, res_val)
+    popt, temp_val = extrapolate_cernox(loc, res_val)
     temp, res, title, x_interp, extrap_max = get_cernox_data(loc)
     plt.loglog(temp, res,'b.', label='Duband Calibration')
     plt.loglog(x_interp, ExpFunc(x_interp, *popt), color='g', linestyle='--', label='Fit Line')
@@ -69,12 +69,25 @@ def get_cernox_data(loc):
         extrap_max = 8000
         x_interp = np.linspace(3, temp[extrap_max], 1000)
     elif loc == 'extrapolated uc evap':
-        d = np.genfromtxt(open("thermometers/R2T_X120258.interp", "rb"), delimiter=" ", filling_values=0)
+        d = np.genfromtxt(open("thermometers/R2T_X120258.interp", "rb"), delimiter="    ", filling_values=0)
         temp = d[:,1]
         res = d[:,0]
         title = 'UC Evaporator (Extrapolated)'
-        x_interp = np.linspace(0.2, 0.315, 100)
-        extrap_max = 4000
+        x_interp = None
+        extrap_max = None
+    elif loc == 'S1':
+        d = np.genfromtxt(open("thermometers/R2T_X154084.interp", "rb"), delimiter=" ", filling_values=0)
+        temp = d[:,1]
+        res = d[:,0]
+        title = 'S1'
+        extrap_max = 500
+        x_interp = np.linspace(0.2, temp[extrap_max], 100)
+    elif loc == 'S3':
+        d = np.genfromtxt(open("thermometers/R2T_X154088.interp", "rb"), delimiter=" ", filling_values=0)
+        temp = d[:,1]
+        res = d[:,0]
+        title = 'S1'
+        extrap_max = 500
         x_interp = np.linspace(0.2, temp[extrap_max], 100)
     else:
         raise ValueError("Argument loc must be 'uc evap', 'ic evap', 'he4 evap', 'he4 cond', 'extrapolated uc evap', 'S1', or 'S3'")
@@ -91,11 +104,28 @@ def plot_uc_duband_vs_extrapolated():
     plt.legend()
     plt.show()
 
-
-
-
-def plot_bias_power(bias_voltages, resistance_vals, locations=['ic evap','uc evap','S1','S3']):
-    pass
+def plot_bias_power(bias_voltages=[10e-6,3e-6,30e-6,100e-6,300e-6,1e-3,3e-3,10e-3,30e-3], 
+                    locations=['ic evap','uc evap','S1','S3'],
+                    r=[[6500,6500,6500,6500,6490,6366,5595,3733,2301],
+                       [1800,1800,1800,1799,1798,1788,1723,1416,1027],
+                       [1856,1856,1854,1850,1851,1843,1781,1473,1060],
+                       [1490,1500,1490,1485,1483,1478,1441,1228,908]]):
+    t = np.zeros_like(r).astype(float)
+    for i, loc in enumerate(locations):
+        for j, res_val in enumerate(r[i]):
+            popt, temp_val = extrapolate_cernox(loc, res_val)
+            t[i,j] = temp_val
+            print(f'Doing {loc}, {res_val}, got {temp_val} K')
+    cernox_res = 2000
+    bias_powers = np.array(bias_voltages)**2 / cernox_res
+    print(bias_powers)
+    for i, loc in enumerate(locations):
+        plt.plot(bias_powers, t[i,:], 'x', label=loc)
+    plt.ylabel('Temperature [K]')
+    plt.xlabel('Bias Power [W]')
+    plt.xscale('log')
+    plt.legend()
+    plt.show()
 
 def ExpFunc(x, a, b):
     return a * np.power(x, b)
