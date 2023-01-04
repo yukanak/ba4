@@ -1,10 +1,9 @@
 function calibrate_cernox(run,starttime,endtime)
-% For example, run=5; starttime='220423 01:00:00'; endtime='220427 14:00:00';
+% For example, run=6; starttime='230103 22:00:00'; endtime='230104 18:30:00';
 
-% Plot temperature curve (all temperatures) for run
 % Load data (can test in reduc/bicep3/, data files in arc/)
 % To use, go to a directory with access to pipeline, and add this directory to startup.m there; then start MATLAB and type plot_temperatures(args)
-d = load_arc(sprintf('/n/home04/yuka/ba4/run_%d/arc/', run), starttime, endtime, {'antenna0.frame.utc', 'antenna0.hk0.slow_temp', 'antenna0.hk0.slow_voltage'});
+d = load_arc(sprintf('/n/home04/yuka/ba4/run_%d/arc', run), starttime, endtime, {'antenna0.frame.utc', 'antenna0.hk0.slow_temp', 'antenna0.hk0.slow_voltage'});
 
 % Turn two field UTC into single column modified Julian date
 f = make_utc_single_col(d);
@@ -14,8 +13,8 @@ f = make_utc_single_col(d);
 time = datenum([y,m,d,h,mm,s]);
 
 %%%%%%%%%% EDIT BELOW %%%%%%%%%%
-calibrated_cernox = 1; % Index for slow_temp
-cernoxes_uncal = [2 3 4];
+calibrated_cernox = 12; % Index of calibrated Cernox; for run 6, the Duband Cernox was 8 and David's fully calibrated ones were 10, 11, 12
+cernoxes_uncal = [13 14 16 17]; % S10 (15) has no daughter card, as with S3 (10)
 cooldown_starttime = datenum([2022,04,27,13,50,00]);
 cooldown_endtime = 
 fridgecycle_starttime = 
@@ -30,6 +29,10 @@ cooldown_time_idx = find(time>cooldown_starttime & time<cooldown_endtime);
 fridgecycle_time_idx = find(time>fridgecycle_starttime & time<fridgecycle_endtime);
 ucexpiration_time_idx = find(time>ucexpiration_starttime & time<ucexpiration_endtime);
 heater_time_idx = find(time>heater_startime & time<heater_endtime);
+
+
+% Smooth
+smooth(f.antenna0.hk0.slow_temp(:,8), 60);
 
 % Try plotting
 figure(1);
