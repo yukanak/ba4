@@ -1,5 +1,6 @@
 function calibrate_cernox(run,starttime,endtime)
-% For example, run=6; starttime='230103 22:00:00'; endtime='230104 18:30:00';
+% For example, run=6; starttime='230103 22:00:00'; endtime='230105 23:30:00';
+% Or run=6; starttime='230104 15:15:00'; endtime='230105 16:00:00';
 
 % Load data (can test in reduc/bicep3/, data files in arc/)
 % To use, go to a directory with access to pipeline, and add this directory to startup.m there; then start MATLAB and type plot_temperatures(args)
@@ -14,203 +15,73 @@ time = datenum([y,m,d,h,mm,s]);
 
 %%%%%%%%%% EDIT BELOW %%%%%%%%%%
 calibrated_cernox = 12; % Index of calibrated Cernox; for run 6, the Duband Cernox was 8 and David's fully calibrated ones were 10, 11, 12
-cernoxes_uncal = [13 14 16 17]; % S10 (15) has no daughter card, as with S3 (10)
-cooldown_starttime = datenum([2022,04,27,13,50,00]);
-cooldown_endtime = 
-fridgecycle_starttime = 
-fridgecycle_endtime = 
-ucexpiration_starttime = 
-ucexpiration_endtime = 
-heater_starttime = 
-heater_endtime = 
+cernoxes_uncal = [11 13 14 16 17]; % S10 (15) has no daughter card, as with S3 (10); note S4 (11) is acting weird
+%dc_cal_G_calibrated = 200.325; % S5 has daughter card C10B
+%dc_cal_V0_calibrated = 0.00208
+dc_cal_G = [199.689,200.432,402.281,199.941,400.314]; % S4 has C10A, S8 has C11B, S9 has C35B, S11 has C11A, S12 has C35A
+dc_cal_V0 = [0.00314,0.00144,-0.00014,0.00147,0.00324];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-cooldown_time_idx = find(time>cooldown_starttime & time<cooldown_endtime);
-fridgecycle_time_idx = find(time>fridgecycle_starttime & time<fridgecycle_endtime);
-ucexpiration_time_idx = find(time>ucexpiration_starttime & time<ucexpiration_endtime);
-heater_time_idx = find(time>heater_startime & time<heater_endtime);
-
-
-% Smooth
-smooth(f.antenna0.hk0.slow_temp(:,8), 60);
-
+starttime = datenum(strcat('20',starttime(1:2),'-',starttime(3:4),'-',starttime(5:end)));
+endtime = datenum(strcat('20',endtime(1:2),'-',endtime(3:4),'-',endtime(5:end)));
 % Try plotting
 figure(1);
-clf;
 setwinsize(gcf,800,600);
-plot(time(cooldown_time_idx), f.antenna0.hk0.slow_temp(cooldown_time_idx, calibrated_cernox), 'k-');
-hold on;
-plot(time(cooldown_time_idx), f.antenna0.hk0.slow_temp(cooldown_time_idx, cernox_uncal(1)), 'r-');
-legend('S1 (calibrated)', 'S2')
-xlabel('Date');
-ylabel('Temperature [K]');
-title(sprintf('BA4 Run %d Temperatures', run));
+clf
+plot(time, f.antenna0.hk0.slow_temp(:, 8));
+hold all;
+plot(time, f.antenna0.hk0.slow_temp(:, calibrated_cernox));
+for i = cernoxes_uncal
+    plot(time, f.antenna0.hk0.slow_temp(:,i));
+end
 % Change x display to user friendly UTC
-datetick('x', 'mm/dd', 'keeplimits');
+datetick('x', 'mm/dd HH:MM', 'keeplimits');
+xlabel('Time');
+ylabel('Temperature [K]');
+title(sprintf('BA4 Run %d Cernox Temperatures', run));
+%% Edit this too %%
+legend('Duband UC', 'S5', 'S4', 'S8', 'S9', 'S11', 'S12')
 % Save
-%print(sprintf('/n/home04/yuka/ba4/run_%d/ba4p%d_cernoxtemps_cooldown', run, run), '-dpng');
+print(sprintf('/n/home04/yuka/ba4/run_%d/ba4p%d_cernoxtemps', run, run), '-dpng');
+%%%%%%%%%%%%%%%%%%%
 
-% Merge all the time indices for the parts that we want for calibration
-cal_time_idx = cat(1, cooldown_time_idx, ucexpiration_time_idx, heater_time_idx);
-
+% Smooth before calibrating (average every couple data points)
+calibrated_temp = smooth(f.antenna0.hk0.slow_temp(:,calibrated_cernox), 10);
 % Calibration
-new_temps = zeros(length(cernoxes_uncal), length(cal_time_idx));
-%calibrated_cernox_voltages = f.antenna0.hk0.slow_voltage(cal_time_idx, calibrated_cernox);
-calibrated_cernox_temps = f.antenna0.hk0.slow_temp(cal_time_idx, calibrated_cernox);
 for i = 1:length(cernoxes_uncal)
     c = cernoxes_uncal(i);
-    new_temps(i,:) = 
+    % Account for daughter card calibrations
+    G = dc_cal_G(i);
+    V0 = dc_cal_V0(i);
+    uncalibrated_voltage = smooth(f.antenna0.hk0.slow_voltage(:,c), 10);
+    uncalibrated_res = G ./ (uncalibrated_voltage - V0); % V = G/R + V0
+    new_cal = [uncalibrated_res, calibrated_temp];
+    % Sort in ascending temperature order
+    sorted_new_cal = sortrows(new_cal, 2);
+    % Make it non-redundant
+    % https://www.mathworks.com/matlabcentral/answers/116969-how-to-average-a-column-based-on-another-column
+    [unique_temp, ia, ic] = unique(sorted_new_cal(:,2));
+    final_new_cal = [accumarray(ic,sorted_new_cal(:,1),[],@mean), unique_temp];
+
+    %figure(2);
+    %clf;
+    %plot(
 
 
 
-    for j = 1:length(cal_time_idx)
-        voltage = f.antenna0.hk0.slow_voltage(cal_time_idx(j), c);
-        % Find closest voltage value in the calibrated Cernox data and assign the corresponding temperature value
-        [closest_voltage_diff closest_voltage_idx] = min(abs(calibrated_cernox_voltages-voltage));
-        new_temps(i,j) = calibrated_cernox_temps(closest_voltage_idx);
+    a = 0;
+    % Check if resistance is monotonically decreasing
+    for j = 1:length(final_new_cal)-1
+        if final_new_cal(j,1) > final_new_cal(j+1,1)
+            a = a+1;
+            %disp(sprintf('NOT MONOTONICALLY DESCREASING FOR CERNOX %i at index %i', c, j))
+        end
     end
+    disp(a)
+    % Save
+    
 end
 
-% Make it monotonic
-[sorted_T, sorted_T_idx] = sort(new_temps,2);
 
-
-
-%TODO: need to convert it to resistance... using daca parameters?
-
-
-
-% Plot it
-figure(2);
-clf;
-setwinsize(gcf,800,600);
-plot(
-
-
-for diode = [29 30 31 32 33 34 35 36 37]
-    temp_avg = nanmean(f.antenna0.hk0.slow_temp(time_idx,diode));
-    fprintf('Thermometer %d: %.2f K\n', diode, temp_avg);
-end
-
-plot(time, f.antenna0.hk0.slow_temp(:,29), 'k-');
-hold on;
-plot(time, f.antenna0.hk0.slow_temp(:,30), 'r-');
-plot(time, f.antenna0.hk0.slow_temp(:,31), 'y-');
-plot(time, f.antenna0.hk0.slow_temp(:,32), 'g-');
-plot(time, f.antenna0.hk0.slow_temp(:,33), 'c-');
-plot(time, f.antenna0.hk0.slow_temp(:,34), 'b-');
-plot(time, f.antenna0.hk0.slow_temp(:,35), 'm-');
-plot(time, f.antenna0.hk0.slow_temp(:,36), 'Color', [0.4940 0.1840 0.5560]);
-plot(time, f.antenna0.hk0.slow_temp(:,37), 'Color', [0.9290 0.6940 0.1250]);
-legend('50K cold head','4K heat strap cold side','4K heat strap warm side','50K heat strap cold side','50K heat strap warm side','4K baseplate','4K tube top','50K tube top', '50K filter');
-
-% Log plot now
-figure(2);
-clf;
-setwinsize(gcf,800,600);
-semilogy(time, f.antenna0.hk0.slow_temp(:,29), 'k-');
-hold on;
-semilogy(time, f.antenna0.hk0.slow_temp(:,30), 'r-');
-semilogy(time, f.antenna0.hk0.slow_temp(:,31), 'y-');
-semilogy(time, f.antenna0.hk0.slow_temp(:,32), 'g-');
-semilogy(time, f.antenna0.hk0.slow_temp(:,33), 'c-');
-semilogy(time, f.antenna0.hk0.slow_temp(:,34), 'b-');
-semilogy(time, f.antenna0.hk0.slow_temp(:,35), 'm-');
-semilogy(time, f.antenna0.hk0.slow_temp(:,36), 'Color', [0.4940 0.1840 0.5560]);
-semilogy(time, f.antenna0.hk0.slow_temp(:,37), 'Color', [0.9290 0.6940 0.1250]);
-legend('50K cold head','4K heat strap cold side','4K heat strap warm side','50K heat strap cold side','50K heat strap warm side','4K baseplate','4K tube top','50K tube top', '50K filter');
-xlabel('Date');
-ylabel('Temperature [K]');
-title(sprintf('BA4 Run %d Temperatures', run));
-
-% Change x display to user friendly UTC
-datetick('x', 'mm/dd', 'keeplimits');
-
-% Save
-print(sprintf('/n/home04/yuka/ba4/run_%d/ba4p%d_cooldown_all_log', run, run), '-dpng');
-
-% Repeat for 4K only
-% Linear plot
-figure(3);
-clf;
-setwinsize(gcf,800,600);
-plot(time, f.antenna0.hk0.slow_temp(:,30), 'r-');
-hold on;
-plot(time, f.antenna0.hk0.slow_temp(:,31), 'y-');
-plot(time, f.antenna0.hk0.slow_temp(:,34), 'b-');
-plot(time, f.antenna0.hk0.slow_temp(:,35), 'm-');
-legend('4K heat strap cold side','4K heat strap warm side','4K baseplate','4K tube top');
-xlabel('Date');
-ylabel('Temperature [K]');
-title(sprintf('BA4 Run %d 4K Temperatures', run));
-
-% Change x display to user friendly UTC
-datetick('x', 'mm/dd', 'keeplimits');
-
-% Save
-print(sprintf('/n/home04/yuka/ba4/run_%d/ba4p%d_cooldown_4k_lin', run, run), '-dpng');
-
-% Log plot now
-figure(4);
-clf;
-setwinsize(gcf,800,600);
-semilogy(time, f.antenna0.hk0.slow_temp(:,30), 'r-');
-hold on;
-semilogy(time, f.antenna0.hk0.slow_temp(:,31), 'y-');
-semilogy(time, f.antenna0.hk0.slow_temp(:,34), 'b-');
-semilogy(time, f.antenna0.hk0.slow_temp(:,35), 'm-');
-legend('4K heat strap cold side','4K heat strap warm side','4K baseplate','4K tube top');
-xlabel('Date');
-ylabel('Temperature [K]');
-title(sprintf('BA4 Run %d 4K Temperatures', run));
-
-% Change x display to user friendly UTC
-datetick('x', 'mm/dd', 'keeplimits');
-
-% Save
-print(sprintf('/n/home04/yuka/ba4/run_%d/ba4p%d_cooldown_4k_log', run, run), '-dpng');
-
-% Repeat for 50K only
-% Linear plot
-figure(5);
-clf;
-setwinsize(gcf,800,600);
-plot(time, f.antenna0.hk0.slow_temp(:,29), 'k-');
-hold on;
-plot(time, f.antenna0.hk0.slow_temp(:,32), 'g-');
-plot(time, f.antenna0.hk0.slow_temp(:,33), 'c-');
-plot(time, f.antenna0.hk0.slow_temp(:,36), 'Color', [0.4940 0.1840 0.5560]);
-plot(time, f.antenna0.hk0.slow_temp(:,37), 'Color', [0.9290 0.6940 0.1250]);
-legend('50K cold head','50K heat strap cold side','50K heat strap warm side','50K tube top','50K filter');
-xlabel('Date');
-ylabel('Temperature [K]');
-title(sprintf('BA4 Run %d 50K Temperatures', run));
-
-% Change x display to user friendly UTC
-datetick('x', 'mm/dd', 'keeplimits');
-
-% Save
-print(sprintf('/n/home04/yuka/ba4/run_%d/ba4p%d_cooldown_50k_lin', run, run), '-dpng');
-
-% Log plot now
-figure(6);
-clf;
-setwinsize(gcf,800,600);
-semilogy(time, f.antenna0.hk0.slow_temp(:,29), 'k-');
-hold on;
-semilogy(time, f.antenna0.hk0.slow_temp(:,32), 'g-');
-semilogy(time, f.antenna0.hk0.slow_temp(:,33), 'c-');
-semilogy(time, f.antenna0.hk0.slow_temp(:,36), 'Color', [0.4940 0.1840 0.5560]);
-semilogy(time, f.antenna0.hk0.slow_temp(:,37), 'Color', [0.9290 0.6940 0.1250]);
-legend('50K cold head','50K heat strap cold side','50K heat strap warm side','50K tube top','50K filter');
-xlabel('Date');
-ylabel('Temperature [K]');
-title(sprintf('BA4 Run %d 50K Temperatures', run));
-
-% Change x display to user friendly UTC
-datetick('x', 'mm/dd', 'keeplimits');
-
-% Save
-print(sprintf('/n/home04/yuka/ba4/run_%d/ba4p%d_cooldown_50k_log', run, run), '-dpng');
 
 return
