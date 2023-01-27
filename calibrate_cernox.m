@@ -15,11 +15,13 @@ time = datenum([y,m,d,h,mm,s]);
 
 %%%%%%%%%% EDIT BELOW %%%%%%%%%%
 calibrated_cernox = 12; % Index of calibrated Cernox; for run 6, the Duband Cernox was 8 and David's fully calibrated ones were 10, 11, 12
-cernoxes_uncal = [11 13 14 16 17]; % S10 (15) has no daughter card, as with S3 (10); note S4 (11) is acting weird
+calibrated_cernox_id = 'X154090';
+cernoxes_uncal = [13 14 16 17]; % S10 (15) has no daughter card, as with S3 (10); note S4 (11) is acting weird so I'm taking it out
+cernoxes_uncal_id = {'X148294' 'X148364' 'X148362' 'X148365'};
 %dc_cal_G_calibrated = 200.325; % S5 has daughter card C10B
 %dc_cal_V0_calibrated = 0.00208
-dc_cal_G = [199.689,200.432,402.281,199.941,400.314]; % S4 has C10A, S8 has C11B, S9 has C35B, S11 has C11A, S12 has C35A
-dc_cal_V0 = [0.00314,0.00144,-0.00014,0.00147,0.00324];
+dc_cal_G = [200.432,402.281,199.941,400.314]; % S4 has C10A, S8 has C11B, S9 has C35B, S11 has C11A, S12 has C35A
+dc_cal_V0 = [0.00144,-0.00014,0.00147,0.00324];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 starttime = datenum(strcat('20',starttime(1:2),'-',starttime(3:4),'-',starttime(5:end)));
@@ -40,7 +42,7 @@ xlabel('Time');
 ylabel('Temperature [K]');
 title(sprintf('BA4 Run %d Cernox Temperatures', run));
 %% Edit this too %%
-legend('Duband UC', 'S5', 'S4', 'S8', 'S9', 'S11', 'S12')
+legend('Duband UC', 'S5', 'S8', 'S9', 'S11', 'S12')
 % Save
 print(sprintf('/n/home04/yuka/ba4/run_%d/ba4p%d_cernoxtemps', run, run), '-dpng');
 %%%%%%%%%%%%%%%%%%%
@@ -60,28 +62,45 @@ for i = 1:length(cernoxes_uncal)
     sorted_new_cal = sortrows(new_cal, 2);
     % Make it non-redundant
     % https://www.mathworks.com/matlabcentral/answers/116969-how-to-average-a-column-based-on-another-column
-    [unique_temp, ia, ic] = unique(sorted_new_cal(:,2));
-    final_new_cal = [accumarray(ic,sorted_new_cal(:,1),[],@mean), unique_temp];
+    %[unique_temp, ia, ic] = unique(sorted_new_cal(:,2));
+    %final_new_cal = [accumarray(ic,sorted_new_cal(:,1),[],@mean), unique_temp];
+
+    % Average together every 0.5 mK
+    tempstart = sorted_new_cal(1,2);
+    tempend = sorted_new_cal(length(uncalibrated_res),2);
+    num = floor((tempend - tempstart)/0.0005 + 1);
+    temp_bin_edges = linspace(tempstart, tempend, num);
+    spacing = (tempend - tempstart)/(num - 1);
+    temp_bin_centers = temp_bin_edges(1:length(temp_bin_edges)-1) + spacing/2;
+    final_new_cal = zeros(length(temp_bin_centers),2);
+    final_new_cal(:,2) = temp_bin_centers;
+    for j = 1:length(temp_bin_centers)
+        idx_bin = find(sorted_new_cal(:,2) >= temp_bin_edges(j) & sorted_new_cal(:,2) < temp_bin_edges(j+1));
+        final_new_cal(j,1) = mean(sorted_new_cal(idx_bin, 1));
+    end
 
     %figure(2);
     %clf;
-    %plot(
+    %loglog(final_new_cal(:,2), final_new_cal(:,1))
+    %xlabel('Temperature')
+    %ylabel('Resistance')
 
-
-
-    a = 0;
-    % Check if resistance is monotonically decreasing
-    for j = 1:length(final_new_cal)-1
-        if final_new_cal(j,1) > final_new_cal(j+1,1)
-            a = a+1;
-            %disp(sprintf('NOT MONOTONICALLY DESCREASING FOR CERNOX %i at index %i', c, j))
-        end
+    % Make monotonic
+    while ~all(diff(final_new_cal(:,1)) <= 0)
+        disp(sprintf('%i points where Cernox %i is not monotonically decreasing in resistance...', length(find(diff(final_new_cal(:,1)) > 0)), c))
+        throw_away_temps = final_new_cal(find(diff(final_new_cal(:,1)) > 0)+1, 2);
+        disp(sprintf('Temperature %.3f is the smallest non-monotonic points', throw_away_temps(1)))
+        idx_good = find(diff(final_new_cal(:,1)) <= 0)+1;
+        final_new_cal = final_new_cal(idx_good, :);
     end
-    disp(a)
+
     % Save
-    
+    final_new_cal = transpose(final_new_cal);
+    filepath = sprintf('/n/home04/yuka/ba4/thermometers/R2T_%s_calibrated_with_%s.interp', char(cernoxes_uncal_id(i)), calibrated_cernox_id);
+    formatSpec = '%.6f %.6f\n';
+    fileID = fopen(filepath,'w');
+    fprintf(fileID, formatSpec, final_new_cal);
+    fclose(fileID);
 end
-
-
 
 return
