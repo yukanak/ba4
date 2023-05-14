@@ -45,6 +45,7 @@ setwinsize(gcf,800,600);
 % UC plate center
 plot(time, f.antenna0.hk0.slow_temp(:,18), 'r-');
 hold on;
+%TODO
 % UC strap dirty
 %plot(time, f.antenna0.hk0.slow_temp(:,20), 'b-');
 % UC evap
@@ -59,9 +60,11 @@ for ii = 1:length(start_times)
     time_i = start_times(ii);
     time_f = end_times(ii);
     time_idx = find(time>time_i & time<time_f);
+    %TODO
     %plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,20), 'g-');
     plot(time(time_idx), f.antenna0.hk0.slow_temp(time_idx,8), 'g-');
 end
+%TODO
 %legend('UC plate center','UC strap dirty', 'Location', 'northwest');
 legend('UC plate center','UC evap', 'Location', 'northwest');
 xlabel('Time');
@@ -72,6 +75,7 @@ title('BA4 Run 8 UC Load Curve Temperatures');
 datetick('x', 'mm/dd HH:MM', 'keeplimits');
 
 % Save
+%TODO
 %print('/n/home04/yuka/ba4/run_8/ba4_run8_uc_load_curve_temp_uc_strap_dirty', '-dpng');
 print('/n/home04/yuka/ba4/run_8/ba4_run8_uc_load_curve_temp_uc_evap', '-dpng');
 
@@ -82,6 +86,7 @@ for ii = 1:length(start_times)
     time_f = end_times(ii);
     time_idx = find(time>time_i & time<time_f);
     t_warm_avg = mean(f.antenna0.hk0.slow_temp(time_idx,18));
+    %TODO
     %t_cold_avg = mean(f.antenna0.hk0.slow_temp(time_idx,20));
     t_cold_avg = mean(f.antenna0.hk0.slow_temp(time_idx,8));
     delta_t_squared(ii) = t_warm_avg.^2 - t_cold_avg.^2;
@@ -112,5 +117,6 @@ ylabel('Applied Power [W]');
 title(sprintf('BA4 Run 8 UC Load Curve: Conductance G = %.2f W/K @ 4K', g));
 
 % Save
+%TODO
 %print('/n/home04/yuka/ba4/run_8/ba4_run8_uc_load_curve_fit_uc_strap_dirty', '-dpng');
 print('/n/home04/yuka/ba4/run_8/ba4_run8_uc_load_curve_fit_uc_evap', '-dpng');
